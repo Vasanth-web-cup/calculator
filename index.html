@@ -31,7 +31,7 @@ body {
 #historyPanel {
   position: fixed;
   top: 0;
-  right: -260px;
+  right: -100%; 
   width: 80vw;
   max-width: 260px;
   height: 100%;
@@ -40,8 +40,12 @@ body {
   padding: 20px;
   overflow-y: auto;
   transition: right 0.4s ease;
+  z-index: 2000;
 }
-#historyPanel.show { right: 0; }
+#historyPanel.show {
+  right: 0;
+}
+
 #historyPanel h2 { text-align: center; margin-top: 0; }
 #historyBtn {
   position: fixed;
@@ -61,20 +65,20 @@ body {
 .calculator {
   margin-top: 40px;
   background: #ffffffd9;
-  padding: 20px;
+  padding: 4vw;
   border-radius: 20px;
   box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-  width: 100%;
+  width: 90vw;
   max-width: 400px;
   box-sizing: border-box;
 }
 .display {
   width: 100%;
-  height: 60px;
+  height: 12vw;
   margin-bottom: 15px;
-  font-size: 2rem;
+  font-size: 5vw;
   text-align: right;
-  padding: 10px;
+  padding: 2vw;
   border: none;
   border-radius: 10px;
   background: #f3f3f3;
@@ -85,8 +89,8 @@ body {
   gap: 10px;
 }
 button {
-  height: 55px;
-  font-size: 1.2rem;
+  height: 12vw;
+  font-size: 4vw;
   border: none;
   border-radius: 10px;
   background: #007bff;
@@ -101,23 +105,22 @@ button.undo { background: #ffc107; color: #333; }
 button.undo:hover { background: #e0a800; }
 .bottom-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3,1fr);
   gap: 10px;
   margin-top: 10px;
 }
 .bottom-row button {
-  height: 55px;
-  font-size: 1.2rem;
+  height: 12vw;
+  font-size: 4vw;
   border-radius: 10px;
 }
-@media (max-width: 480px) {
-  #pageTitle { font-size: 2.2rem; }
-  #historyBtn { width: 80px; height: 45px; font-size: 0.9rem; }
-  .display { height: 50px; font-size: 1.6rem; }
-  button { height: 50px; font-size: 1rem; }
-  .calculator { padding: 15px; }
-  .bottom-row { grid-template-columns: 1fr; }
-  .bottom-row button { width: 100%; height: 50px; font-size: 1.1rem; }
+@media (min-width: 480px) {
+  .display { height: 60px; font-size: 2rem; padding: 10px; }
+  button { height: 55px; font-size: 1.2rem; }
+  .bottom-row button { height: 55px; font-size: 1.2rem; }
+  .calculator { padding: 20px; width: 100%; max-width: 400px; }
+  #pageTitle { font-size: 3rem; }
+  #historyBtn { width: 100px; height: 50px; font-size: 1rem; }
 }
 </style>
 </head>
@@ -207,8 +210,9 @@ function updateHistory() {
 }
 function toggleHistory() {
   const panel = document.getElementById('historyPanel');
-  panel.classList.toggle('show');
+  panel.classList.toggle('show'); 
 }
+
 </script>
 
 </body>
