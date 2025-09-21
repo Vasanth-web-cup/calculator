@@ -181,6 +181,8 @@ button.undo:hover {
 
     <button onclick="clearDisplay()">C</button>
     <button class="undo" onclick="undo()">Undo</button>
+    <button onclick="erase()">⌫</button>
+
   </div>
 </div>
 
@@ -203,6 +205,13 @@ function undo() {
     display.value = undoStack.pop();
   }
 }
+  function erase() {
+  if (display.value.length > 0) {
+    undoStack.push(display.value); // save current state for undo
+    display.value = display.value.slice(0, -1); // remove last character
+  }
+}
+
 function calculate() {
   try {
     undoStack.push(display.value);
@@ -233,4 +242,5 @@ function toggleHistory() {
 
 </body>
 </html>
+
 
