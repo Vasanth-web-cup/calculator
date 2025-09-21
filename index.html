@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@600&display=swap" rel="stylesheet">
+
+
+<style>
+/* --- Page background & layout --- */
+body {
+  margin:0;
+  font-family:Segoe UI, Tahoma, sans-serif;
+  background:linear-gradient(135deg,#a8edea 0%,#fed6e3 100%);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+}
+
+#pageTitle {
+  margin-top: 40px;
+  font-family: 'Poppins', sans-serif; 
+  font-weight: 800; 
+  font-size: 3.5rem; 
+  color: #1a1a1a; 
+  text-shadow: 3px 3px 8px rgba(0,0,0,0.2);
+  letter-spacing: 1.5px; 
+  text-align: center;
+}
+
+
+@keyframes titleGradient {
+  0% {background-position:0% 50%;}
+  50% {background-position:100% 50%;}
+  100% {background-position:0% 50%;}
+}
+
+@keyframes titlePop {
+  0%{transform:scale(0.8);opacity:0;}
+  60%{transform:scale(1.1);opacity:1;}
+  100%{transform:scale(1);}
+}
+
+@keyframes titlePop {
+  0%{transform:scale(0.8);opacity:0;}
+  60%{transform:scale(1.1);opacity:1;}
+  100%{transform:scale(1);}
+}
+
+/* --- History panel --- */
+#historyPanel {
+  position:fixed;
+  top:0;
+  right:-260px;
+  width:260px;
+  height:100%;
+  background:#fff;
+  box-shadow:-2px 0 8px rgba(0,0,0,0.2);
+  padding:20px;
+  overflow-y:auto;
+  transition:right 0.4s ease;
+}
+#historyPanel.show {
+  right:0;
+}
+#historyPanel h2 {
+  margin-top:0;
+  text-align:center;
+}
+
+/* --- History toggle button --- */
+#historyBtn {
+  position:fixed;
+  top:15px;
+  left:15px;
+  z-index:1000;
+  color:white;
+  background-color:#007bff;
+  border:none;
+  border-radius:25px;
+  height:50px;
+  width:100px;
+  cursor:pointer;
+  font-size:1rem;
+  box-shadow:0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* --- Calculator container --- */
+.calculator {
+  margin-top:40px;
+  background:#ffffffd9;
+  padding:20px;
+  border-radius:20px;
+  box-shadow:0 10px 20px rgba(0,0,0,0.2);
+  width:280px;
+}
+.display {
+  width:100%;
+  height:60px;
+  margin-bottom:15px;
+  font-size:2rem;
+  text-align:right;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#f3f3f3;
+}
+.buttons {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+button {
+  height:55px;
+  font-size:1.2rem;
+  border:none;
+  border-radius:10px;
+  background:#007bff;
+  color:white;
+  cursor:pointer;
+  transition:background 0.2s;
+}
+button:hover {
+  background:#0056b3;
+}
+button.operator {
+  background:#28a745;
+}
+button.operator:hover {
+  background:#1e7e34;
+}
+button.undo {
+  background:#ffc107;
+  color:#333;
+}
+button.undo:hover {
+  background:#e0a800;
+}
+</style>
+</head>
+<body>
+
+<h1 id="pageTitle">Smart-Calculator</h1>
+
+<!-- Slide-out history panel -->
+<div id="historyPanel" aria-hidden="true">
+  <h2>History</h2>
+  <ul id="historyList"></ul>
+</div>
+
+<!-- Fixed history button -->
+<button id="historyBtn" onclick="toggleHistory()" aria-expanded="false">History</button>
+
+<!-- Calculator -->
+<div class="calculator" role="application" aria-label="Calculator">
+  <input type="text" class="display" id="display" readonly>
+
+  <div class="buttons">
+    <button onclick="append('7')">7</button>
+    <button onclick="append('8')">8</button>
+    <button onclick="append('9')">9</button>
+    <button class="operator" onclick="append('/')">÷</button>
+
+    <button onclick="append('4')">4</button>
+    <button onclick="append('5')">5</button>
+    <button onclick="append('6')">6</button>
+    <button class="operator" onclick="append('*')">×</button>
+
+    <button onclick="append('1')">1</button>
+    <button onclick="append('2')">2</button>
+    <button onclick="append('3')">3</button>
+    <button class="operator" onclick="append('-')">−</button>
+
+    <button onclick="append('0')">0</button>
+    <button onclick="append('.')">.</button>
+    <button class="operator" onclick="append('+')">+</button>
+    <button class="operator" onclick="calculate()">=</button>
+
+    <button onclick="clearDisplay()">C</button>
+    <button class="undo" onclick="undo()">Undo</button>
+  </div>
+</div>
+
+<script>
+const display = document.getElementById('display');
+const historyList = document.getElementById('historyList');
+let history = [];
+let undoStack = [];
+
+function append(char) {
+  undoStack.push(display.value);
+  display.value += char;
+}
+function clearDisplay() {
+  undoStack.push(display.value);
+  display.value = '';
+}
+function undo() {
+  if (undoStack.length > 0) {
+    display.value = undoStack.pop();
+  }
+}
+function calculate() {
+  try {
+    const result = eval(display.value);
+    history.push(display.value + ' = ' + result);
+    updateHistory();
+    undoStack = [];
+    display.value = result;
+  } catch {
+    alert('Invalid Expression');
+  }
+}
+function updateHistory() {
+  historyList.innerHTML = '';
+  history.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = item;
+    historyList.appendChild(li);
+  });
+}
+function toggleHistory() {
+  const panel = document.getElementById('historyPanel');
+  panel.classList.toggle('show');
+}
+</script>
+
+</body>
+</html>
