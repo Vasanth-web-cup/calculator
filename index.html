@@ -205,15 +205,18 @@ function undo() {
 }
 function calculate() {
   try {
+    undoStack.push(display.value);
+
     const result = eval(display.value);
     history.push(display.value + ' = ' + result);
     updateHistory();
-    undoStack = [];
-    display.value = result;
+
+    display.value = result; 
   } catch {
     alert('Invalid Expression');
   }
 }
+
 function updateHistory() {
   historyList.innerHTML = '';
   history.forEach(item => {
@@ -230,3 +233,4 @@ function toggleHistory() {
 
 </body>
 </html>
+
